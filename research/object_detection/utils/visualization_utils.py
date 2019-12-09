@@ -700,8 +700,9 @@ def add_cdf_image_summary(values, name):
     image = np.fromstring(fig.canvas.tostring_rgb(), dtype='uint8').reshape(
         1, int(height), int(width), 3)
     return image
-  cdf_plot = tf.py_func(cdf_plot, [values], tf.uint8)
-  tf.summary.image(name, cdf_plot)
+  # Commented by JvL. https://github.com/tensorflow/models/issues/4791
+  #cdf_plot = tf.py_func(cdf_plot, [values], tf.uint8)
+  #tf.summary.image(name, cdf_plot)
 
 
 def add_hist_image_summary(values, bins, name):

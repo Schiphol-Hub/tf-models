@@ -387,7 +387,7 @@ def create_model_fn(detection_model_fn, configs, hparams, use_tpu=False):
       # Eval metrics on a single example.
       eval_metric_ops = eval_util.get_eval_metric_ops_for_evaluators(
           eval_config,
-          category_index.values(),
+          list(category_index.values()),
           eval_dict)
       for loss_key, loss_tensor in iter(losses_dict.items()):
         eval_metric_ops[loss_key] = tf.metrics.mean(loss_tensor)
@@ -610,7 +610,12 @@ def create_train_and_eval_specs(train_input_fn,
           name=eval_spec_name,
           input_fn=eval_input_fn,
           steps=eval_steps,
-          exporters=exporter)
+          exporters=exporter,
+          # Deepturn: by default evaluation is skipped if it's still within the minimum time interval of
+          # evaluation. Which is 10 minutes or 600 secs. Can be lowered as needed here:
+          # https://github.com/tensorflow/models/issues/5139#issuecomment-418963839
+          # throttle_secs=60
+      )
   ]
 
   if eval_on_train_data:
